@@ -23,7 +23,7 @@ This AWS sample demonstrates an automated way for managing OpenSearch Index.
 
 ## Instructions
 
-1. **Set up a CDK project:** First, Create a new CDK project or use an existing one. We will use CDK with TypeScript and following below steps.
+1. **Set up a CDK project:** First, Create a new CDK project or use an existing one. We will use CDK with TypeScript and follow below steps.
 
     ```
     mkdir opensearch-cdk-project
