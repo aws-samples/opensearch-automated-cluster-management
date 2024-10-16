@@ -109,21 +109,31 @@ export class OpensearchCdkProjectStack extends cdk.Stack {
         vpc,
         securityGroups: [lambdaSecurityGroup],
         environment: {
-          OPENSEARCH_DOMAIN_ENDPOINT: domain.domainEndpoint,
+          OPENSEARCH_DOMAIN_ENDPOINT: `https://${domain.domainEndpoint}`,
         },
       }
     );
 
     // Give access to Lambda Security Group to access OpenSearch security group
+    lambdaSecurityGroup.addEgressRule(
+      ec2.Peer.securityGroupId(domainSecurityGroup.securityGroupId),
+      ec2.Port.tcp(80),
+      "Allow Lambda access to OpenSearch domain"
+    );
+    lambdaSecurityGroup.addEgressRule(
+      ec2.Peer.securityGroupId(domainSecurityGroup.securityGroupId),
+      ec2.Port.tcp(443),
+      "Allow Lambda access to OpenSearch domain"
+    );
     domainSecurityGroup.addIngressRule(
       lambdaSecurityGroup,
       ec2.Port.tcp(443),
-      "Allow Lambda access"
+      "Allow Lambda access to OpenSearch domain"
     );
     domainSecurityGroup.addIngressRule(
       lambdaSecurityGroup,
       ec2.Port.tcp(80),
-      "Allow Lambda access"
+      "Allow Lambda access to OpenSearch domain"
     );
   }
 }

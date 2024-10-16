@@ -24,7 +24,6 @@ public class Handler implements RequestHandler<Map<String, String>, Void> {
     public Void handleRequest(Map<String, String> event, Context context) {
         LambdaLogger logger = context.getLogger();
         executeOpensearchScripts();
-        // Need to return something useful
         return null;
     }
 
@@ -55,7 +54,7 @@ public class Handler implements RequestHandler<Map<String, String>, Void> {
                 "es",
                 AwsV4HttpSigner.create(),
                 DefaultCredentialsProvider.create(),
-                "us-east-2");
+                System.getenv("AWS_REGION"));
     }
 
 }
