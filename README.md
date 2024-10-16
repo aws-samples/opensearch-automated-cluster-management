@@ -2,7 +2,7 @@
 
 Managing OpenSearch index resources manually can be a daunting task, fraught with potential errors and inefficiencies. Automating these processes can streamline operations, improve consistency, and enhance collaboration across teams.
 
-This AWS sample demonstrates an automated way for managing OpenSearch Index
+This AWS sample demonstrates an automated way for managing OpenSearch Index.
 
 **Important**: 
 1. This templates deploys various AWS services and there are costs associated with these services. Please refer the [AWS Pricing page](https://aws.amazon.com/pricing/) for details regarding pricing. You are responsible for any AWS costs incurred. No warranty is implied in this example.
