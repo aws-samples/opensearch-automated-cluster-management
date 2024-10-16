@@ -15,7 +15,7 @@ This AWS sample demonstrates an automated way for managing OpenSearch Index.
 * You should already have an AWS Acccount.The IAM user that you will use for running this sample must have sufficient permissions to make necessary AWS service calls and manage AWS resources. If you dont not an AWS account please [Create an AWS account](https://portal.aws.amazon.com/gp/aws/developer/registration/index.html) 
 * You should have Jenkins installed on your build server. [Jenkins Installion](https://www.jenkins.io/doc/book/installing/)
 
-* **Python3**: Python 3.11 or new. And make sure you have `pip` installed and working
+* **AWS CDK**: Install the latest version of AWS CDK. You can follow the official documentation for installation: [Getting started with the AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html)
 
 
 
@@ -23,39 +23,101 @@ This AWS sample demonstrates an automated way for managing OpenSearch Index.
 
 ## Instructions
 
-1. **Set up a CDK project:** First, create a new CDK project using the AWS CDK CLI. You can follow the official documentation for setting up a new CDK project: [Getting started with the AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html)
+1. **Set up a CDK project:** First, Create a new CDK project or use an existing one. We will use CDK with TypeScript and following below steps.
 
-2. **Install the required packages:** In your CDK project, install the *aws-cdk.aws-opensearchservice package* using pip. Open a terminal, navigate to your CDK project folder, and run the following command
     ```
-    pip install aws-cdk.aws-opensearchservice
+    mkdir opensearch-cdk-project
+    cd opensearch-cdk-project
+    cdk init app --language typescript
     ```
 
-3. **Define the OpenSearch cluster:** In your CDK code (e.g., app.py), import the necessary classes and define the OpenSearch cluster. Here's an example:
+2. **Install the required packages:** In your CDK project. Open a terminal, navigate to your CDK project folder, and run the following command
+    ```
+    npm install @aws-cdk/aws-opensearchservice
+    ```
+3. If you're using CDK v2, update your *bin/opensearch-cdk-project.ts* file to look like this:
+    ```
+    #!/usr/bin/env node
+    import 'source-map-support/register';
+    import * as cdk from 'aws-cdk-lib';
+    import { OpensearchCdkProjectStack } from '../lib/opensearch-cdk-project-stack';
+
+    const app = new cdk.App();
+    new OpensearchCdkProjectStack(app, 'OpensearchCdkProjectStack');
+    ```
+
+4. Open the main stack file (usually *lib/opensearch-cdk-project-stack.ts*) and import the required modules:
+    ```
+    import * as cdk from 'aws-cdk-lib';
+    import * as opensearch from 'aws-cdk-lib/aws-opensearchservice';
+    import * as ec2 from 'aws-cdk-lib/aws-ec2';
+    import { Construct } from 'constructs';
+    ```
+
+
+5. **Define the OpenSearch cluster:** Inside the stack class, add the code to create the OpenSearch cluster. Here's an example:
     ``` 
-    from aws_cdk import Stack
-    from aws_cdk import aws_opensearchservice as opensearch
-    from constructs import Construct
+    export class OpensearchCdkProjectStack extends cdk.Stack {
+    constructor(scope: Construct, id: string, props?: cdk.StackProps) {
+        super(scope, id, props);
 
-    class MyStack(Stack):
-        def __init__(self, scope: Construct, construct_id: str, **kwargs) -> None:
-            super().__init__(scope, construct_id, **kwargs)
+        // Create a VPC
+        const vpc = new ec2.Vpc(this, 'OpenSearchVPC', {
+        maxAzs: 4
+        });
 
-            # Define the OpenSearch cluster properties
-            cluster_config = opensearch.ClusterProps(
-                version=opensearch.EngineVersion.OPENSEARCH_1_3,
-                node_props=opensearch.NodeProps(
-                    capacity=opensearch.Capacity(data_node_count=3)
-                )
-            )
+        // Create the OpenSearch domain
+        const domain = new opensearch.Domain(this, 'OpenSearchDomain', {
+        version: opensearch.EngineVersion.OPENSEARCH_2_11,
+        enableVersionUpgrade: true,
+        
+        vpc,
+        vpcSubnets: [{ subnetType: ec2.SubnetType.PRIVATE_WITH_EGRESS }],
+        
+        zoneAwareness: {
+            availabilityZoneCount: 2
+        },
+        
+        capacity: {
+            dataNodes: 2,
+            dataNodeInstanceType: 'r6g.large.search',
+            multiAzWithStandbyEnabled: false
+            
+        },
+        ebs: {
+            volumeSize: 10,
+            volumeType: ec2.EbsDeviceVolumeType.GP2
+        },
+        nodeToNodeEncryption: true,
+        encryptionAtRest: {
+            enabled: true
+        },
+        enforceHttps: true,
+        fineGrainedAccessControl: {
+            masterUserName: 'admin'
+        }
+        });
 
-            # Create the OpenSearch cluster
-            opensearch_cluster = opensearch.Cluster(self, "OpenSearchCluster", cluster_config)
+        // Output the domain endpoint
+        new cdk.CfnOutput(this, 'DomainEndpoint', {
+        value: domain.domainEndpoint,
+        description: 'OpenSearch Domain Endpoint'
+        });
+    }
+    }
     ```
-    In this example, we create an OpenSearch cluster with version 1.3, and configure it with three data nodes. You can customize the cluster properties according to your requirements, such as changing the engine version, node types, storage configurations, and more.
+    This code creates an OpenSearch domain with the following configuration:
+    - Uses OpenSearch version 2.11
+    - Deploys in a VPC with 2 Availability Zones
+    - Uses 2 data nodes of type r6g.large.search
+    - Configures 10GB GP2 EBS volumes for each node
+    - Enables node-to-node encryption and encryption at rest
+    - Enforces HTTPS
+    - Sets up fine-grained access control with an admin user.
 
-4. **Configure access policies (optional):** If you need to access the OpenSearch cluster from outside the VPC (e.g., from your local machine), you might need to configure access policies. You can do this by adding the necessary configuration to the ClusterProps object.
 
-5. **Deploy the stack:** Once you've defined the OpenSearch cluster in your CDK code, you can deploy the stack using the AWS CDK CLI. Run the following commands:
+
+6. **Deploy the stack:** Once you've defined the OpenSearch cluster in your CDK code, you can deploy the stack using the AWS CDK CLI. Run the following commands:
     ```
     cdk synth
     cdk deploy
