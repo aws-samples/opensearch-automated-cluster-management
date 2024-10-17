@@ -45,7 +45,8 @@ public class Handler implements RequestHandler<Map<String, String>, Void> {
     }
 
     private HttpHost getHttpHost() {
-        return HttpHost.create("https://search-example-domain-nwcfb4dbw7nhb5ofqnhyh2higi.us-east-2.es.amazonaws.com");
+        //Replace sample-endpoint with your own OpenSearch endpoint
+        return HttpHost.create("https://<<sample-endpoint>>.amazonaws.com");
     }
 
     private HttpRequestInterceptor getAwsRequestSigningInterceptor() {

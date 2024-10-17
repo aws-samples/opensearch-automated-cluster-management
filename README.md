@@ -234,6 +234,8 @@ The filename has to follow a pattern:
 
 Please refer Java code available in **/app/openSearchMigration/** for this implementation. This is a maven project hence use relavant maven commands to build.
 
+**Note** : Please replace the OpenSearch endpoint in the Handler.java file with your own endpoint.
+
 ## Security
 
 See [CONTRIBUTING](CONTRIBUTING.md#security-issue-notifications) for more information.
