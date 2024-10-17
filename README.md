@@ -17,8 +17,14 @@ This AWS sample demonstrates an automated way for managing OpenSearch Index.
 
 * **AWS CDK**: Install the latest version of AWS CDK. You can follow the official documentation for installation: [Getting started with the AWS CDK](https://docs.aws.amazon.com/cdk/v2/guide/getting_started.html)
 
+## High level workflow
+
+![Architecture Diagram](images/architecture.png)
 
 
+For demonstration, we will be using AWS Lambda to trigger Evolution scripts manually.
+
+![Workflow using AWS Lambda](images/using-aws-lambda.png)
 
 
 ## Instructions
@@ -126,6 +132,8 @@ This AWS sample demonstrates an automated way for managing OpenSearch Index.
 
     After the deployment is complete, the CDK will output the endpoint for your OpenSearch cluster. You can use this endpoint to interact with the cluster using the OpenSearch APIs or tools like Kibana.
 
+For reference the sample code has been provided in the folder **/infra/**
+
 **Note :** Creating an OpenSearch cluster on AWS may incur costs based on your usage and configuration. Be sure to review the AWS pricing for OpenSearch before deploying your cluster.
 
 
@@ -172,7 +180,7 @@ Evolution executes versioned migration scripts reliably and persists the executi
                     .build();
     }
     ```
-4. A Elasticsearch-Evolutions migration script represents just a rest call. Here is an Example:
+4. Migration script file content : A Elasticsearch-Evolutions migration script represents just a rest call. Here is an Example:
     ```
     PUT template/my_template
     Content-Type: application/json
@@ -224,6 +232,7 @@ The filename has to follow a pattern:
 
     Here is an example which indicates the ordering: 1.0.1 < 1.1 < 1.2.1 < (2.0.0 == 2). In this example version 1.0.1 is the smallest version and is executed first, after that version 1.1, 1.2.1 and in the end 2. 2 is the same as 2.0 or 2.0.0 - so trailing zeros will be trimmed.
 
+Please refer Java code available in **/app/openSearchMigration/** for this implementation. This is a maven project hence use relavant maven commands to build.
 
 ## Security
 
