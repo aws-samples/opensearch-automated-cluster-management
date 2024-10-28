@@ -1,0 +1,3 @@
+example/Handler.class
+example/utils/RequestSigner.class
+example/utils/AwsRequestSigningApacheInterceptor.class
