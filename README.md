@@ -6,7 +6,7 @@ This repository contains both the CDK files and the sample Lambda function Java 
 
 ### Pre-requisites
 
-- Latest versions of Node, NPM, Java and Maven installed.
+- Latest versions of Node, NPM, AWS CLI, Java and Maven installed.
 - AWS account with the required role, permissions and credentials to deploy the stack.
 
 ### Simple deployment
