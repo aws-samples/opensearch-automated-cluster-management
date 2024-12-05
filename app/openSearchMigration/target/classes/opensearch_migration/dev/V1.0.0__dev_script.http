@@ -1,23 +1,25 @@
-PUT /_template/my_template
+PUT /_index_template/cicd_template_evolution
 Content-Type: application/json
 
 {
-  "index_patterns": ["my_index_*"],
-  "order": 1,
-  "version": 1,
-  "settings": {
-    "number_of_shards": 1
-  },
-  "mappings": {
-    "properties": {
-      "version": {
-        "type": "keyword",
-        "ignore_above": 20,
-        "similarity": "boolean"
-      },
-      "locked": {
-        "type": "boolean"
-      }
+  "index_patterns": ["evolution_index_*"],
+  "template": {
+    "settings": {
+      "number_of_shards": "1"
+    },
+    "mappings": {
+        "_source": {
+            "enabled": false
+        },
+        "properties": {
+            "host_name": {
+                "type": "keyword"
+            },
+            "created_at": {
+                "type": "date",
+                "format": "EEE MMM dd HH:mm:ss Z YYYY"
+            }
+        }
     }
   }
 }
