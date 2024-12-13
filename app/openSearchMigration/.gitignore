@@ -140,4 +140,7 @@ fabric.properties
 hs_err_pid*
 replay_pid*
 
+# mise
+mise.toml
+
 # End of https://www.toptal.com/developers/gitignore/api/intellij,java
