@@ -144,3 +144,7 @@ cdk.context.json
 cdk.out/
 *.tabl.json
 cdk-integ.out.*/
+
+# Terraform
+# Local .terraform directories
+**/.terraform/*
